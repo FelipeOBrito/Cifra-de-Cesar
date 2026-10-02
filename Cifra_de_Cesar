@@ -1,0 +1,113 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+// Função para calcular o termo de Fibonacci
+int fibonacci(int n) {
+    if (n == 0 || n == 1) return 1;
+    int a = 1, b = 1, c;
+    for (int i = 2; i <= n; i++) {
+        c = a + b;
+        a = b;
+        b = c;
+    }
+    return c;
+}
+
+// Função para calcular o termo de uma PA (Ex: a1=1, r=2)
+int progressao_aritmetica(int n) {
+    return 1 + n * 2; 
+}
+
+// Função para calcular o termo de uma PG (Ex: a1=1, q=2)
+int progressao_geometrica(int n) {
+    int val = 1;
+    for(int i = 0; i < n; i++) val *= 2;
+    return val;
+}
+
+// Função para calcular o número Primo
+int primo(int n) {
+    int count = 0;
+    int num = 2;
+    while(1) {
+        int is_prime = 1;
+        for(int i = 2; i * i <= num; i++) {
+            if(num % i == 0) { is_prime = 0; break; }
+        }
+        if(is_prime) {
+            if(count == n) return num;
+            count++;
+        }
+        num++;
+    }
+}
+
+int main() {
+    char palavra[50];
+    char resultado[50];
+    int shift, escolha;
+    
+    printf("Digite uma palavra secreta (sem acentos, ate 15 letras): ");
+    scanf("%15s", palavra);
+    
+    printf("Digite o valor do SHIFT (Cifra de Cesar): ");
+    scanf("%d", &shift);
+    
+    printf("\nEscolha a sequencia para a segunda camada de criptografia:\n");
+    printf("1 - Progressao Aritmetica (PA)\n");
+    printf("2 - Progressao Geometrica (PG)\n");
+    printf("3 - Sequencia de Fibonacci\n");
+    printf("4 - Numeros Primos\n");
+    printf("Opcao: ");
+    scanf("%d", &escolha);
+    
+    int tamanho = strlen(palavra);
+    
+    printf("\nPalavra original: %s\n", palavra);
+    printf("Mensagem criptografada: ");
+    
+    for (int i = 0; i < tamanho; i++) {
+        int seq_val = 0;
+        
+        // Avalia a escolha do usuário usando switch case
+        switch(escolha) {
+            case 1: seq_val = progressao_aritmetica(i); break;
+            case 2: seq_val = progressao_geometrica(i); break;
+            case 3: seq_val = fibonacci(i); break;
+            case 4: seq_val = primo(i); break;
+            default: seq_val = 0; // Sem camada 2 se opção inválida
+        }
+        
+        // Deslocamento total = SHIFT + sequencia[i]
+        int deslocamento_total = shift + seq_val;
+        
+        // Aplica o deslocamento respeitando maiúsculas e minúsculas
+        if (isupper(palavra[i])) {
+            resultado[i] = ((palavra[i] - 'A' + deslocamento_total) % 26) + 'A';
+        } else if (islower(palavra[i])) {
+            resultado[i] = ((palavra[i] - 'a' + deslocamento_total) % 26) + 'a';
+        } else {
+            resultado[i] = palavra[i]; // Mantém caracteres que não são letras
+        }
+        
+        printf("%c", resultado[i]);
+    }
+    resultado[tamanho] = '\0';
+    printf("\n");
+    
+    // Gravação dos dados no arquivo de log
+    FILE *arquivo = fopen("resultado_criptografia.txt", "w");
+    if (arquivo != NULL) {
+        fprintf(arquivo, "Palavra codificada: %s | SHIFT: %d | Tipo: %d | Letras: %d\n", 
+                resultado, shift, escolha, tamanho);
+        fclose(arquivo);
+        printf("\nLog gravado com sucesso em 'resultado_criptografia.txt'.\n");
+    } else {
+        printf("\nErro ao criar o arquivo de log.\n");
+    }
+
+    return 0;
+}
