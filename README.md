@@ -2,7 +2,7 @@ Projeto Cifra de Cesar em C
 Projeto desenvolvido para a disciplina de Algoritmo e Pensamento Computacional, sob a orientação do Professor Francisco de Assis Cavallaro 
 
 ## Autores:
-Felipe de Oliveira Brito
+Felipe de Oliveira Brito 
 Victor Correa
 
 ## Sobre o Projeto
